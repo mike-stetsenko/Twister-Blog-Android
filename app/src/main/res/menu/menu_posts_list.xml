@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.mairos.twisterblog.MainActivity">
+
+    <item android:id="@+id/action_add"
+        android:title="add post"
+        android:icon="@android:drawable/ic_menu_add"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+</menu>
