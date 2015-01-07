@@ -1,23 +1,31 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/post_content"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:text="Post content" />
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/list_comments"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1" />
+        <TextView
+            android:id="@+id/post_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:textSize="16sp"
+            android:text="Post content" />
 
-</LinearLayout>
+        <ListView
+            android:id="@+id/list_comments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

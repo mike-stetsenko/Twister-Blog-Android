@@ -18,7 +18,6 @@ public class MainActivity extends ActionBarActivity implements PostsListFragment
         if (savedInstanceState == null) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.add(R.id.content, PostsListFragment.newInstance());
-            ft.addToBackStack(null);
             ft.commit();
         }
     }

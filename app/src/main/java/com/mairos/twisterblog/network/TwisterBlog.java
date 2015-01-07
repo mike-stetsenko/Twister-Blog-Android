@@ -22,4 +22,7 @@ public interface TwisterBlog {
 
     @GET("/insert_post.php")
     RequestResult addPost(@Query("post_title") String post_title, @Query("post_body") String post_body);
+
+    @GET("/insert_comment.php")
+    RequestResult addComment(@Query("post_id") int post_id, @Query("comment_body") String comment_body);
 }

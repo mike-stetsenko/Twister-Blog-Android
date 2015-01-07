@@ -2,6 +2,7 @@ package com.mairos.twisterblog;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.mairos.twisterblog.model.Comment;
 import com.mairos.twisterblog.model.Post;
+import com.mairos.twisterblog.network.AddCommentRequest;
 import com.mairos.twisterblog.network.CommentsRequest;
 import com.mairos.twisterblog.network.TwisterBlogService;
 import com.octo.android.robospice.SpiceManager;
@@ -22,13 +24,16 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.InstanceState;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
 @EFragment(R.layout.fragment_post_content)
-public class PostContentFragment extends Fragment {
+@OptionsMenu({R.menu.menu_post_content})
+public class PostContentFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
 
     @InstanceState
     @FragmentArg
@@ -36,6 +41,9 @@ public class PostContentFragment extends Fragment {
 
     @ViewById(R.id.post_content)
     protected TextView mPostContent;
+
+    @ViewById(R.id.swipe_container)
+    SwipeRefreshLayout updater;
 
     @ViewById(R.id.list_comments)
     protected ListView mListComments;
@@ -77,13 +85,35 @@ public class PostContentFragment extends Fragment {
         getSpiceManager().execute(commentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
     }
 
+    @AfterViews
+    protected void initGUI(){
+        updater.setOnRefreshListener(this);
+        updater.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
+
     @UiThread
     void updateList(Comment.List comments) {
         mListComments.setAdapter(new CommentsAdapter(comments));
     }
 
+    @OptionsItem(R.id.action_add)
+    void addPost() {
+        AddCommentDialogFragment dialog = AddCommentDialogFragment.newInstance(mPostArg);
+        dialog.setTargetFragment(PostContentFragment.this, 0);
+        dialog.show(getFragmentManager(), "dialog");
+    }
+
     protected SpiceManager getSpiceManager() {
         return spiceManager;
+    }
+
+    @Override
+    public void onRefresh() {
+        commentsRequest = new CommentsRequest(mPostArg.id);
+        getSpiceManager().execute(commentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
     }
 
     public final class ListCommentsRequestListener implements RequestListener<Comment.List> {
@@ -91,6 +121,7 @@ public class PostContentFragment extends Fragment {
         @Override
         public void onRequestFailure(SpiceException spiceException) {
             Toast.makeText(getActivity(), "failure comments", Toast.LENGTH_SHORT).show();
+            updater.setRefreshing(false);
         }
 
         @Override
@@ -99,6 +130,7 @@ public class PostContentFragment extends Fragment {
                 Toast.makeText(getActivity(), "success comments " + result.size(), Toast.LENGTH_SHORT).show();
                 updateList(result);
             } else Toast.makeText(getActivity(), "no comments to this post", Toast.LENGTH_SHORT).show();
+            updater.setRefreshing(false);
         }
     }
 
