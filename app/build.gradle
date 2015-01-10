@@ -11,6 +11,7 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
     }
 
     packagingOptions {
@@ -19,6 +20,7 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'LICENSE.txt'
     }
 
     compileOptions {
@@ -44,10 +46,21 @@ apt {
     }
 }
 
+def AAVersion = '3.2+'
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.google.guava:guava:16.0'
     compile 'com.octo.android.robospice:robospice-retrofit:1.4.11'
-    apt "org.androidannotations:androidannotations:3.0+"
-    compile 'org.androidannotations:androidannotations-api:3.0+'
+    apt "org.androidannotations:androidannotations:$AAVersion"
+    compile "org.androidannotations:androidannotations-api:$AAVersion"
+    androidTestCompile ('com.jakewharton.espresso:espresso:1.1-r3') {
+        exclude group:'com.google.guava', module:'guava'
+    }
+    androidTestCompile('com.jakewharton.espresso:espresso-support-v4:1.1-r3') {
+        exclude group:'com.android.support', module:'support-v4'
+        exclude group:'com.google.guava', module:'guava'
+    }
 }
