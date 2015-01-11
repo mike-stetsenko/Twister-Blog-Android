@@ -1,37 +1,55 @@
 package com.mairos.twisterblog;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView;
-import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
-import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.typeText;
-import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withId;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withText;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by Mike on 10.01.2015.
  */
+@RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ActionBarTest extends ActivityInstrumentationTestCase2<MainActivity_> {
+
+    private MainActivity_ mActivity;
+
     @SuppressWarnings("deprecation")
     public ActionBarTest() {
         // This constructor was deprecated - but we want to support lower API levels.
-        super("com.mairos.twisterblog", MainActivity_.class);
+        super(MainActivity_.class);
     }
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        // As the way to access Instrumentation is changed in the new runner, we need to inject it
+        // manually into ActivityInstrumentationTestCase2.
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
         // Espresso will not launch our activity for us, we must launch it via getActivity().
-        getActivity();
+        mActivity = getActivity();
     }
 
+    @Test
     public void testActivityTitle() {
-        assertEquals("Twister blog", getActivity().getTitle());
+        assertEquals("Twister blog", mActivity.getTitle());
     }
 
+    @Test
     public void testAddPostMenuItem() {
         onView(withId(R.id.action_add))
                 .perform(click());
@@ -47,5 +65,12 @@ public class ActionBarTest extends ActivityInstrumentationTestCase2<MainActivity
 
         onView(withId(R.id.button_add))
                 .perform(click());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        // Make sure that we call the tearDown() method of ActivityInstrumentationTestCase2
+        // to clean up and not leak any objects.
+        super.tearDown();
     }
 }

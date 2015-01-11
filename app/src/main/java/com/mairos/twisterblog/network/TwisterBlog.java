@@ -25,4 +25,7 @@ public interface TwisterBlog {
 
     @GET("/insert_comment.php")
     RequestResult addComment(@Query("post_id") int post_id, @Query("comment_body") String comment_body);
+
+    @GET("/delete_post.php")
+    RequestResult deletePost(@Query("post_id") int post_id);
 }
