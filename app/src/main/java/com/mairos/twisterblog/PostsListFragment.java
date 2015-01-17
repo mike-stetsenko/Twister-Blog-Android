@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.network.PostsRequest;
 import com.mairos.twisterblog.network.TwisterBlogService;
+import com.mairos.twisterblog.storage.Storage;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
@@ -26,6 +27,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EFragment(R.layout.fragment_posts_list)
@@ -74,6 +76,9 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @AfterViews
     protected void initGUI(){
+        List<Post> posts = Storage.get().getPosts();
+        if (posts.size() > 0) updateList(posts);
+
         updater.setOnRefreshListener(this);
         updater.setColorScheme(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -100,7 +105,7 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @UiThread
-    void updateList(Post.List posts) {
+    void updateList(List<Post> posts) {
         mListPosts.setAdapter(new PostsAdapter(posts));
     }
 
@@ -113,13 +118,13 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(getActivity(), "failure posts", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "failure update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
         }
 
         @Override
         public void onRequestSuccess(final Post.List result) {
-            Toast.makeText(getActivity(), "success posts", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "success update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
             updateList(result);
         }

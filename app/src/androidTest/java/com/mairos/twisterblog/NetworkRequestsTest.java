@@ -1,16 +1,15 @@
 package com.mairos.twisterblog;
 
-import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.MediumTest;
 
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.model.RequestResult;
-import com.mairos.twisterblog.network.TwisterBlog;
+import com.mairos.twisterblog.network.TwisterBlogHttp;
 
 import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
-//import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,10 +22,10 @@ import retrofit.RestAdapter;
 @RunWith(OrderedRunner.class)
 // TODO import junit:4.11
 //@FixMethodOrder
-@LargeTest
+@MediumTest
 public class NetworkRequestsTest extends TestCase {
 
-    private TwisterBlog mRetrofitService;
+    private TwisterBlogHttp mRetrofitService;
     private RestAdapter mRestAdapter;
 
     private static volatile int sPostId = 0;
@@ -36,14 +35,14 @@ public class NetworkRequestsTest extends TestCase {
         super.setUp();
 
         mRestAdapter = new RestAdapter.Builder()
-                .setServer(TwisterBlog.API_URL)
+                .setServer(TwisterBlogHttp.API_URL)
                 .build();
 
-        mRetrofitService = mRestAdapter.create(TwisterBlog.class);
+        mRetrofitService = mRestAdapter.create(TwisterBlogHttp.class);
     }
 
     @Test
-    // FIXME - anyway, this looks like pretty bicycle
+    // FIXME - anyway, ordering looks like pretty bicycle
     @Order(order=1)
     public void testAddPost() {
         RequestResult res = mRetrofitService.addPost("test post title - NetworkRequestsTest", "test post title - NetworkRequestsTest");

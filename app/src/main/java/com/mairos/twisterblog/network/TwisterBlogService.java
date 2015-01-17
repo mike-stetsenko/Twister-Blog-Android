@@ -4,12 +4,12 @@ import com.octo.android.robospice.retrofit.RetrofitGsonSpiceService;
 
 public class TwisterBlogService extends RetrofitGsonSpiceService {
 
-    private final static String BASE_URL = TwisterBlog.API_URL;
+    private final static String BASE_URL = TwisterBlogHttp.API_URL;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        addRetrofitInterface(TwisterBlog.class);
+        addRetrofitInterface(TwisterBlogHttp.class);
     }
 
     @Override

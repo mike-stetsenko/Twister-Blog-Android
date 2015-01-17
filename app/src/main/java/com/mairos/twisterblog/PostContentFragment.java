@@ -15,6 +15,7 @@ import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.network.AddCommentRequest;
 import com.mairos.twisterblog.network.CommentsRequest;
 import com.mairos.twisterblog.network.TwisterBlogService;
+import com.mairos.twisterblog.storage.Storage;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
@@ -29,11 +30,12 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EFragment(R.layout.fragment_post_content)
 @OptionsMenu({R.menu.menu_post_content})
-public class PostContentFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
+public class PostContentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @InstanceState
     @FragmentArg
@@ -80,7 +82,12 @@ public class PostContentFragment extends Fragment  implements SwipeRefreshLayout
 
     @AfterViews
     protected void init(){
+        // restore data from local database
+        List<Comment> comments = Storage.get().getCommentsByPost(mPostArg.id);
+        if (comments.size() > 0) updateList(comments);
+
         mPostContent.setText(mPostArg.body);
+        // try to get the actual one
         commentsRequest = new CommentsRequest(mPostArg.id);
         getSpiceManager().execute(commentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
     }
@@ -95,7 +102,7 @@ public class PostContentFragment extends Fragment  implements SwipeRefreshLayout
     }
 
     @UiThread
-    void updateList(Comment.List comments) {
+    void updateList(List<Comment> comments) {
         mListComments.setAdapter(new CommentsAdapter(comments));
     }
 
@@ -120,14 +127,14 @@ public class PostContentFragment extends Fragment  implements SwipeRefreshLayout
 
         @Override
         public void onRequestFailure(SpiceException spiceException) {
-            Toast.makeText(getActivity(), "failure comments", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "failure comments update", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
         }
 
         @Override
         public void onRequestSuccess(final Comment.List result) {
             if (result != null) {
-                Toast.makeText(getActivity(), "success comments " + result.size(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "success comments update : " + result.size(), Toast.LENGTH_SHORT).show();
                 updateList(result);
             } else Toast.makeText(getActivity(), "no comments to this post", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
