@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="30dp">
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
-        android:layout_width="fill_parent"
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:gravity="center_vertical"
-        android:text="New Text"
-        android:id="@+id/textPostTitle"/>
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="8dp"
+        android:gravity="left"
+        android:textSize="16sp"
+        android:text="title title title title title title title title title title title title title title title "/>
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:gravity="right|bottom"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textSize="11sp"
+        android:text="date"/>
+
+    <!---->
 </LinearLayout>

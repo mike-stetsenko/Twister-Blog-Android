@@ -1,18 +1,16 @@
-package com.mairos.twisterblog;
+package com.mairos.twisterblog.gui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mairos.twisterblog.R;
+import com.mairos.twisterblog.gui.adapters.CommentsAdapter;
 import com.mairos.twisterblog.model.Comment;
 import com.mairos.twisterblog.model.Post;
-import com.mairos.twisterblog.network.AddCommentRequest;
 import com.mairos.twisterblog.network.CommentsRequest;
 import com.mairos.twisterblog.network.TwisterBlogService;
 import com.mairos.twisterblog.storage.Storage;
@@ -30,7 +28,6 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @EFragment(R.layout.fragment_post_content)
@@ -103,7 +100,7 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
 
     @UiThread
     void updateList(List<Comment> comments) {
-        mListComments.setAdapter(new CommentsAdapter(comments));
+        mListComments.setAdapter(new CommentsAdapter(comments, getActivity()));
     }
 
     @OptionsItem(R.id.action_add)
@@ -138,49 +135,6 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
                 updateList(result);
             } else Toast.makeText(getActivity(), "no comments to this post", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
-        }
-    }
-
-    private class CommentsAdapter extends BaseAdapter {
-        private List<Comment> mComments;
-
-        public CommentsAdapter(List<Comment> comments) {
-            mComments = comments;
-        }
-
-        public int getCount() {
-            return mComments.size();
-        }
-
-        public Object getItem(int position) {
-            return mComments.get(position);
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = convertView;
-            ViewHolder holder = null;
-            final Comment item = (Comment) getItem(position);
-
-            if (rowView == null) {
-                rowView = getActivity().getLayoutInflater().inflate(R.layout.list_item_post, parent, false);
-                holder = new ViewHolder();
-                holder.title = (TextView) rowView.findViewById(R.id.textPostTitle);
-                rowView.setTag(holder);
-            } else {
-                holder = (ViewHolder) rowView.getTag();
-            }
-
-            holder.title.setText(item.body);
-
-            return rowView;
-        }
-
-        private class ViewHolder {
-            public TextView title;
         }
     }
 }

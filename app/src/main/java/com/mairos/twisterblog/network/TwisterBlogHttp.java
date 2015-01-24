@@ -4,8 +4,6 @@ import com.mairos.twisterblog.model.Comment;
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.model.RequestResult;
 
-import java.util.ArrayList;
-
 import retrofit.http.GET;
 import retrofit.http.Query;
 

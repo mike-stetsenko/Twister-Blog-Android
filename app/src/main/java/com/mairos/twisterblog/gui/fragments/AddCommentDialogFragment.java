@@ -1,10 +1,11 @@
-package com.mairos.twisterblog;
+package com.mairos.twisterblog.gui.fragments;
 
 import android.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.mairos.twisterblog.R;
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.model.RequestResult;
 import com.mairos.twisterblog.network.AddCommentRequest;

@@ -1,16 +1,14 @@
-package com.mairos.twisterblog;
+package com.mairos.twisterblog.gui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mairos.twisterblog.R;
+import com.mairos.twisterblog.gui.adapters.PostsAdapter;
 import com.mairos.twisterblog.model.Post;
+import com.mairos.twisterblog.network.DeletePostRequest;
 import com.mairos.twisterblog.network.PostsRequest;
 import com.mairos.twisterblog.network.TwisterBlogService;
 import com.mairos.twisterblog.storage.Storage;
@@ -27,25 +25,27 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import de.timroes.android.listview.EnhancedListView;
 
 @EFragment(R.layout.fragment_posts_list)
 @OptionsMenu({R.menu.menu_posts_list})
 public class PostsListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    interface Callback {
+    public interface Callback {
         void onPostSelect(Post post);
     }
 
     private SpiceManager spiceManager = new SpiceManager(TwisterBlogService.class);
     private PostsRequest postsRequest;
+    private DeletePostRequest deletePostRequest;
 
     @ViewById(R.id.swipe_container)
     SwipeRefreshLayout updater;
 
     @ViewById(R.id.list_posts)
-    protected ListView mListPosts;
+    protected EnhancedListView mListPosts;
 
     public PostsListFragment() {
         // Required empty public constructor
@@ -84,7 +84,42 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        mListPosts.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
+        mListPosts.setRequireTouchBeforeDismiss(false);
+        mListPosts.setUndoHideDelay(3000);
+        mListPosts.setSwipeDirection(EnhancedListView.SwipeDirection.BOTH);
+        mListPosts.setDismissCallback(dismissCalback);
+        mListPosts.enableSwipeToDismiss();
     }
+
+    private EnhancedListView.OnDismissCallback dismissCalback = new EnhancedListView.OnDismissCallback() {
+        @Override
+        public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
+            final PostsAdapter adapter = (PostsAdapter) mListPosts.getAdapter();
+            final Post post = (Post) adapter.getItem(position);
+
+            if (post == null) return null;
+
+            adapter.remove(position);
+
+            return new EnhancedListView.Undoable() {
+                @Override
+                public void undo() {
+                    adapter.insert(position, post);
+                }
+                @Override
+                public String getTitle() {
+                    return "post removed";
+                }
+                @Override
+                public void discard() {
+                    deletePostRequest = new DeletePostRequest(post.id);
+                    getSpiceManager().execute(deletePostRequest, post.id, DurationInMillis.ALWAYS_EXPIRED, null);
+                }
+            };
+        }
+    };
 
     protected SpiceManager getSpiceManager() {
         return spiceManager;
@@ -106,7 +141,7 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @UiThread
     void updateList(List<Post> posts) {
-        mListPosts.setAdapter(new PostsAdapter(posts));
+        mListPosts.setAdapter(new PostsAdapter(posts, getActivity()));
     }
 
     @Override
@@ -127,49 +162,6 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
             Toast.makeText(getActivity(), "success update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
             updateList(result);
-        }
-    }
-
-    private class PostsAdapter extends BaseAdapter {
-        private List<Post> mPosts;
-
-        public PostsAdapter(List<Post> posts) {
-            mPosts = posts;
-        }
-
-        public int getCount() {
-            return mPosts.size();
-        }
-
-        public Object getItem(int position) {
-            return mPosts.get(position);
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = convertView;
-            ViewHolder holder = null;
-            final Post item = (Post) getItem(position);
-
-            if (rowView == null) {
-                rowView = getActivity().getLayoutInflater().inflate(R.layout.list_item_post, parent, false);
-                holder = new ViewHolder();
-                holder.title = (TextView) rowView.findViewById(R.id.textPostTitle);
-                rowView.setTag(holder);
-            } else {
-                holder = (ViewHolder) rowView.getTag();
-            }
-
-            holder.title.setText(item.title);
-
-            return rowView;
-        }
-
-        private class ViewHolder {
-            public TextView title;
         }
     }
 }

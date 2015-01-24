@@ -1,7 +1,6 @@
 package com.mairos.twisterblog;
 
 import android.test.suitebuilder.annotation.MediumTest;
-import android.util.Log;
 
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.storage.Storage;
@@ -39,7 +38,6 @@ public class StorageOperationsTest extends TestCase {
     @Order(order=1)
     public void testSavePost() {
         long res = mStorage.savePost(examplePost);
-        Log.d("test", "savePost " + res);
         assertTrue("post was not added to table", res >= 0);
     }
 
@@ -47,7 +45,6 @@ public class StorageOperationsTest extends TestCase {
     @Order(order=2)
     public void testGetAllPosts() {
         List<Post> posts = mStorage.getPosts();
-        Log.d("test", "posts " + posts.size());
         assertTrue("posts were not extracted from table", posts.size() > 0);
     }
 

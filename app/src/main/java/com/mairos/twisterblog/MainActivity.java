@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 
+import com.mairos.twisterblog.gui.fragments.PostContentFragment;
+import com.mairos.twisterblog.gui.fragments.PostsListFragment;
 import com.mairos.twisterblog.model.Post;
 
 import org.androidannotations.annotations.EActivity;
