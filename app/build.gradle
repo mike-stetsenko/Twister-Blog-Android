@@ -85,11 +85,13 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'de.timroes.android:EnhancedListView:0.3.4'
     compile 'com.google.guava:guava:16.0'
-    compile 'com.octo.android.robospice:robospice-retrofit:1.4.11'
+    compile 'com.octo.android.robospice:robospice-retrofit:1.4.14'
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'nl.qbusict:cupboard:2.0.1'
-
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
+    compile 'com.squareup.okhttp:mockwebserver:2.1.0'
     compile 'com.android.support:support-annotations:21.0.3'
     androidTestCompile ('com.android.support.test.espresso:espresso-core:2.0')
     //androidTestCompile 'junit:junit:4.11'

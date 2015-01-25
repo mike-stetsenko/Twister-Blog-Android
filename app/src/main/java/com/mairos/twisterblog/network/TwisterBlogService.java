@@ -5,7 +5,7 @@ import com.octo.android.robospice.retrofit.RetrofitGsonSpiceService;
 
 public class TwisterBlogService extends RetrofitGsonSpiceService {
 
-    public final static String sBaseUrl = Constants.API_URL;
+    public static String sBaseUrl = Constants.API_URL;
 
     @Override
     public void onCreate() {

@@ -36,7 +36,7 @@ public class NetworkRequestsTest extends TestCase {
         super.setUp();
 
         mRestAdapter = new RestAdapter.Builder()
-                .setServer(TwisterBlogService.sBaseUrl)
+                .setEndpoint(Constants.API_URL)
                 .build();
 
         mRetrofitService = mRestAdapter.create(TwisterBlogHttp.class);
