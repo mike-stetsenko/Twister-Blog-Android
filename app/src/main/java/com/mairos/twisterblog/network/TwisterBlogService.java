@@ -1,10 +1,11 @@
 package com.mairos.twisterblog.network;
 
+import com.mairos.twisterblog.Constants;
 import com.octo.android.robospice.retrofit.RetrofitGsonSpiceService;
 
 public class TwisterBlogService extends RetrofitGsonSpiceService {
 
-    private final static String BASE_URL = TwisterBlogHttp.API_URL;
+    public final static String sBaseUrl = Constants.API_URL;
 
     @Override
     public void onCreate() {
@@ -14,7 +15,7 @@ public class TwisterBlogService extends RetrofitGsonSpiceService {
 
     @Override
     protected String getServerUrl() {
-        return BASE_URL;
+        return sBaseUrl;
     }
 
 }

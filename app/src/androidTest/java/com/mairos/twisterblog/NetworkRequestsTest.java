@@ -5,6 +5,7 @@ import android.test.suitebuilder.annotation.MediumTest;
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.model.RequestResult;
 import com.mairos.twisterblog.network.TwisterBlogHttp;
+import com.mairos.twisterblog.network.TwisterBlogService;
 
 import junit.framework.TestCase;
 
@@ -35,7 +36,7 @@ public class NetworkRequestsTest extends TestCase {
         super.setUp();
 
         mRestAdapter = new RestAdapter.Builder()
-                .setServer(TwisterBlogHttp.API_URL)
+                .setServer(TwisterBlogService.sBaseUrl)
                 .build();
 
         mRetrofitService = mRestAdapter.create(TwisterBlogHttp.class);

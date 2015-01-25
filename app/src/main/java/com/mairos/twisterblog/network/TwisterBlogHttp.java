@@ -12,8 +12,6 @@ import retrofit.http.Query;
  */
 public interface TwisterBlogHttp {
 
-    public static String API_URL = "http://guess-composer.ru/twister_blog";
-
     @GET("/select_all.php")
     Post.List getPosts();
 

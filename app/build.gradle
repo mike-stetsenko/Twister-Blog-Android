@@ -12,6 +12,12 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'spoon'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
 
 android {
     compileSdkVersion 21
@@ -24,6 +30,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    productFlavors {
+        production {
+            applicationId "com.mairos.twisterblog"
+        }
+
+        staging {
+            applicationId "com.mairos.twisterblog.staging"
+        }
     }
 
     packagingOptions {
@@ -40,6 +56,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -61,7 +81,6 @@ apt {
 def AAVersion = '3.2+'
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'de.timroes.android:EnhancedListView:0.3.4'
