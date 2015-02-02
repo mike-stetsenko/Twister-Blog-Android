@@ -93,7 +93,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
     compile 'com.squareup.okhttp:mockwebserver:2.1.0'
     compile 'com.android.support:support-annotations:21.0.3'
+    compile 'junit:junit:4.11'
+
     androidTestCompile ('com.android.support.test.espresso:espresso-core:2.0')
-    //androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'com.squareup.spoon:spoon-client:1.1.1'
 }

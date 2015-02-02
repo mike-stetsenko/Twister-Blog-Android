@@ -2,7 +2,6 @@ package com.mairos.twisterblog.gui.fragments;
 
 import android.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -64,7 +63,6 @@ public class AddPostDialogFragment extends DialogFragment {
     @Click(R.id.button_add)
     protected void onAddClick(){
         mAddPostRequest = new AddPostRequest(mPostTitle.getText().toString(), mPostBody.getText().toString());
-        Log.d("unit_tests", "AddPostDialog execute request");
         if (getTargetFragment() instanceof PostsListFragment){
             RequestStatusObject.getInstance().setStarted();
         }
@@ -84,7 +82,6 @@ public class AddPostDialogFragment extends DialogFragment {
             if (getTargetFragment() instanceof SwipeRefreshLayout.OnRefreshListener){
                 ((SwipeRefreshLayout.OnRefreshListener) getTargetFragment()).onRefresh();
             }
-            Log.d("unit_tests","AddPostDialog before dismiss");
             dismiss();
         }
     }

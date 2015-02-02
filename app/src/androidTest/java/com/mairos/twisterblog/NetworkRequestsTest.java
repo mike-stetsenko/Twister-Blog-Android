@@ -1,6 +1,8 @@
 package com.mairos.twisterblog;
 
+import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.MediumTest;
+import android.util.Log;
 
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.model.RequestResult;
@@ -11,6 +13,7 @@ import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,9 +23,8 @@ import retrofit.RestAdapter;
  * Created by Mike on 11.01.2015.
  */
 
-@RunWith(OrderedRunner.class)
-// TODO import junit:4.11
-//@FixMethodOrder
+@RunWith(AndroidJUnit4.class)
+@FixMethodOrder
 @MediumTest
 public class NetworkRequestsTest extends TestCase {
 
@@ -43,15 +45,12 @@ public class NetworkRequestsTest extends TestCase {
     }
 
     @Test
-    // FIXME - anyway, ordering looks like pretty bicycle
-    @Order(order=1)
     public void testAddPost() {
         RequestResult res = mRetrofitService.addPost("test post title - NetworkRequestsTest", "test post title - NetworkRequestsTest");
         assertEquals(RequestResult.SUCCESS_MESSAGE, res.message);
     }
 
     @Test
-    @Order(order=2)
     public void testGetAllPosts() {
         Post.List posts = mRetrofitService.getPosts();
         assertNotNull("there are no posts in database", posts);
@@ -59,7 +58,6 @@ public class NetworkRequestsTest extends TestCase {
     }
 
     @Test
-    @Order(order=3)
     public void testRemovePost() {
         RequestResult res = mRetrofitService.deletePost(sPostId);
         assertEquals(RequestResult.SUCCESS_MESSAGE, res.message);

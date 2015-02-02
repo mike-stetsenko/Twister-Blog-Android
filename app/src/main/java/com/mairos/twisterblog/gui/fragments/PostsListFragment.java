@@ -3,7 +3,6 @@ package com.mairos.twisterblog.gui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.mairos.twisterblog.R;
@@ -106,7 +105,6 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
             if (post == null) return null;
 
             adapter.remove(position);
-            Log.d("unit_tests", "PostsListFragment - swipe delete, remove item");
 
             return new EnhancedListView.Undoable() {
                 @Override
@@ -119,7 +117,6 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
                 }
                 @Override
                 public void discard() {
-                    Log.d("unit_tests", "PostsListFragment - execute delete request");
                     mDeletePostRequest = new DeletePostRequest(post.id);
                     RequestStatusObject.getInstance().setStarted();
                     getSpiceManager().execute(mDeletePostRequest, post.id,
@@ -169,7 +166,6 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
         public void onRequestSuccess(final Post.List result) {
             Toast.makeText(getActivity(), "success update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
-            Log.d("unit_tests", "PostsListFragment - result received");
             updateList(result);
             RequestStatusObject.getInstance().setFinished();
         }

@@ -1,5 +1,6 @@
 package com.mairos.twisterblog;
 
+import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.MediumTest;
 
 import com.mairos.twisterblog.model.Post;
@@ -9,6 +10,7 @@ import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,9 +20,8 @@ import java.util.List;
  * Created by Mike on 11.01.2015.
  */
 
-@RunWith(OrderedRunner.class)
-// TODO import junit:4.11
-//@FixMethodOrder
+@RunWith(AndroidJUnit4.class)
+@FixMethodOrder
 @MediumTest
 public class StorageOperationsTest extends TestCase {
 
@@ -35,21 +36,18 @@ public class StorageOperationsTest extends TestCase {
     }
 
     @Test
-    @Order(order=1)
     public void testSavePost() {
         long res = mStorage.savePost(examplePost);
         assertTrue("post was not added to table", res >= 0);
     }
 
     @Test
-    @Order(order=2)
     public void testGetAllPosts() {
         List<Post> posts = mStorage.getPosts();
         assertTrue("posts were not extracted from table", posts.size() > 0);
     }
 
     @Test
-    @Order(order=3)
     public void testRemovePosts() {
         int res = mStorage.deleteAllPosts();
         assertTrue("post was not removed from table", res > 0);

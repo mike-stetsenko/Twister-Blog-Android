@@ -6,6 +6,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 
 import com.mairos.twisterblog.model.Post;
 import com.mairos.twisterblog.network.RequestStatusObject;
@@ -13,11 +14,13 @@ import com.mairos.twisterblog.network.RequestStatusObject;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
@@ -37,14 +40,16 @@ import static com.android.support.test.deps.guava.base.Preconditions.checkNotNul
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+// FIXME - anyway, ordering looks like pretty bicycle
+@FixMethodOrder
 public class PostsPageTest extends ActivityInstrumentationTestCase2<MainActivity_> {
 
     private MainActivity_ mActivity;
 
     private RequestStatusIdlingResource mRequestIR;
 
-    private static final SimpleDateFormat form = new SimpleDateFormat("SSS");
-    private static final Post sTestPost = new Post(12345, "post from espresso "/* + form.format(new Date())*/,
+    private static final SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final Post sTestPost = new Post(12345, "post from espresso " + form.format(new Date()),
             "post created from espresso testing library", "created_at", "updated_at");
 
     @SuppressWarnings("deprecation")
@@ -76,7 +81,7 @@ public class PostsPageTest extends ActivityInstrumentationTestCase2<MainActivity
     }
 
     @Test
-    public void testPostAddClickRemove() throws IOException {
+    public void testAddPost() throws IOException {
 
         onView(withId(R.id.action_add))
                 .perform(click());
@@ -94,12 +99,14 @@ public class PostsPageTest extends ActivityInstrumentationTestCase2<MainActivity
                 .perform(click());
 
         // TODO write correct matcher
-        /*onView(withId(R.id.list_posts))
-                .check(matches(withAdaptedData(withItemContent(sTestPost.title))));*/
-
+        // https://code.google.com/p/android-test-kit/wiki/EspressoSamples#Asserting_that_a_data_item_is_not_in_an_adapter
         onView(Matchers.allOf(ViewMatchers.withId(R.id.text_title),
                 ViewMatchers.hasSibling(ViewMatchers.withText(sTestPost.title))))
                 .check(matches(withText(sTestPost.title)));
+    }
+
+    @Test
+    public void testPostsListClick() throws IOException {
 
         onView(Matchers.allOf(ViewMatchers.withId(R.id.text_title),
                 ViewMatchers.hasSibling(ViewMatchers.withText(sTestPost.title)))).perform(click());
@@ -107,6 +114,10 @@ public class PostsPageTest extends ActivityInstrumentationTestCase2<MainActivity
                 .check(matches(withText(sTestPost.body)));
 
         onView(isRoot()).perform(pressBack());
+    }
+
+    @Test
+    public void testRemovePost() throws IOException {
 
         onView(Matchers.allOf(ViewMatchers.withId(R.id.text_title),
                 ViewMatchers.hasSibling(ViewMatchers.withText(sTestPost.title)))).perform(swipeRight());
