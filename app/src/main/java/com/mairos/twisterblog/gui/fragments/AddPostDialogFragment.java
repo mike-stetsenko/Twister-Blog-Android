@@ -2,12 +2,14 @@ package com.mairos.twisterblog.gui.fragments;
 
 import android.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mairos.twisterblog.R;
 import com.mairos.twisterblog.model.RequestResult;
 import com.mairos.twisterblog.network.AddPostRequest;
+import com.mairos.twisterblog.network.RequestStatusObject;
 import com.mairos.twisterblog.network.TwisterBlogService;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -22,11 +24,11 @@ import org.androidannotations.annotations.ViewById;
 @EFragment(R.layout.fragment_add_post_dialog)
 public class AddPostDialogFragment extends DialogFragment {
 
-    private AddPostRequest addPostRequest;
+    private AddPostRequest mAddPostRequest;
 
-    private SpiceManager spiceManager = new SpiceManager(TwisterBlogService.class);
+    private SpiceManager mSpiceManager = new SpiceManager(TwisterBlogService.class);
     protected SpiceManager getSpiceManager() {
-        return spiceManager;
+        return mSpiceManager;
     }
 
     @ViewById(R.id.text_title)
@@ -45,13 +47,13 @@ public class AddPostDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        spiceManager.start(getActivity());
+        mSpiceManager.start(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        spiceManager.shouldStop();
+        mSpiceManager.shouldStop();
     }
 
     @AfterViews
@@ -61,8 +63,12 @@ public class AddPostDialogFragment extends DialogFragment {
 
     @Click(R.id.button_add)
     protected void onAddClick(){
-        addPostRequest = new AddPostRequest(mPostTitle.getText().toString(), mPostBody.getText().toString());
-        getSpiceManager().execute(addPostRequest, "add_post", DurationInMillis.ONE_SECOND, new AddPostRequestListener());
+        mAddPostRequest = new AddPostRequest(mPostTitle.getText().toString(), mPostBody.getText().toString());
+        Log.d("unit_tests", "AddPostDialog execute request");
+        if (getTargetFragment() instanceof PostsListFragment){
+            RequestStatusObject.getInstance().setStarted();
+        }
+        getSpiceManager().execute(mAddPostRequest, "add_post", DurationInMillis.ONE_SECOND, new AddPostRequestListener());
     }
 
     public final class AddPostRequestListener implements RequestListener<RequestResult> {
@@ -78,6 +84,7 @@ public class AddPostDialogFragment extends DialogFragment {
             if (getTargetFragment() instanceof SwipeRefreshLayout.OnRefreshListener){
                 ((SwipeRefreshLayout.OnRefreshListener) getTargetFragment()).onRefresh();
             }
+            Log.d("unit_tests","AddPostDialog before dismiss");
             dismiss();
         }
     }

@@ -25,15 +25,15 @@ import org.androidannotations.annotations.ViewById;
 @EFragment(R.layout.fragment_add_comment_dialog)
 public class AddCommentDialogFragment extends DialogFragment {
 
-    private AddCommentRequest addCommentRequest;
+    private AddCommentRequest mAddCommentRequest;
 
     @InstanceState
     @FragmentArg
     protected Post mPost;
 
-    private SpiceManager spiceManager = new SpiceManager(TwisterBlogService.class);
+    private SpiceManager mSpiceManager = new SpiceManager(TwisterBlogService.class);
     protected SpiceManager getSpiceManager() {
-        return spiceManager;
+        return mSpiceManager;
     }
 
     @ViewById(R.id.comment_text)
@@ -52,13 +52,13 @@ public class AddCommentDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        spiceManager.start(getActivity());
+        mSpiceManager.start(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        spiceManager.shouldStop();
+        mSpiceManager.shouldStop();
     }
 
     @AfterViews
@@ -68,8 +68,8 @@ public class AddCommentDialogFragment extends DialogFragment {
 
     @Click(R.id.button_add)
     protected void onAddClick(){
-        addCommentRequest = new AddCommentRequest(mPost.id, mCommentBody.getText().toString());
-        getSpiceManager().execute(addCommentRequest, "add_comment", DurationInMillis.ONE_SECOND, new AddCommentRequestListener());
+        mAddCommentRequest = new AddCommentRequest(mPost.id, mCommentBody.getText().toString());
+        getSpiceManager().execute(mAddCommentRequest, "add_comment", DurationInMillis.ONE_SECOND, new AddCommentRequestListener());
     }
 
     public final class AddCommentRequestListener implements RequestListener<RequestResult> {

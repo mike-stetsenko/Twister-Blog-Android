@@ -42,13 +42,13 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
     protected TextView mPostContent;
 
     @ViewById(R.id.swipe_container)
-    SwipeRefreshLayout updater;
+    SwipeRefreshLayout mUpdater;
 
     @ViewById(R.id.list_comments)
     protected ListView mListComments;
 
     private SpiceManager spiceManager = new SpiceManager(TwisterBlogService.class);
-    private CommentsRequest commentsRequest;
+    private CommentsRequest mCommentsRequest;
 
     public static PostContentFragment newInstance(Post post) {
         return PostContentFragment_.builder()
@@ -84,15 +84,15 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
         if (comments.size() > 0) updateList(comments);
 
         mPostContent.setText(mPostArg.body);
-        // try to get the actual one
-        commentsRequest = new CommentsRequest(mPostArg.id);
-        getSpiceManager().execute(commentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
+        // try to getState the actual one
+        mCommentsRequest = new CommentsRequest(mPostArg.id);
+        getSpiceManager().execute(mCommentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
     }
 
     @AfterViews
     protected void initGUI(){
-        updater.setOnRefreshListener(this);
-        updater.setColorScheme(android.R.color.holo_blue_bright,
+        mUpdater.setOnRefreshListener(this);
+        mUpdater.setColorScheme(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -116,8 +116,8 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        commentsRequest = new CommentsRequest(mPostArg.id);
-        getSpiceManager().execute(commentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
+        mCommentsRequest = new CommentsRequest(mPostArg.id);
+        getSpiceManager().execute(mCommentsRequest, "twister_comments", DurationInMillis.ONE_SECOND, new ListCommentsRequestListener());
     }
 
     public final class ListCommentsRequestListener implements RequestListener<Comment.List> {
@@ -125,7 +125,7 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
         @Override
         public void onRequestFailure(SpiceException spiceException) {
             Toast.makeText(getActivity(), "failure comments update", Toast.LENGTH_SHORT).show();
-            updater.setRefreshing(false);
+            mUpdater.setRefreshing(false);
         }
 
         @Override
@@ -134,7 +134,7 @@ public class PostContentFragment extends Fragment implements SwipeRefreshLayout.
                 Toast.makeText(getActivity(), "success comments update : " + result.size(), Toast.LENGTH_SHORT).show();
                 updateList(result);
             } else Toast.makeText(getActivity(), "no comments to this post", Toast.LENGTH_SHORT).show();
-            updater.setRefreshing(false);
+            mUpdater.setRefreshing(false);
         }
     }
 }

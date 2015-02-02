@@ -3,13 +3,16 @@ package com.mairos.twisterblog.gui.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mairos.twisterblog.R;
 import com.mairos.twisterblog.gui.adapters.PostsAdapter;
 import com.mairos.twisterblog.model.Post;
+import com.mairos.twisterblog.model.RequestResult;
 import com.mairos.twisterblog.network.DeletePostRequest;
 import com.mairos.twisterblog.network.PostsRequest;
+import com.mairos.twisterblog.network.RequestStatusObject;
 import com.mairos.twisterblog.network.TwisterBlogService;
 import com.mairos.twisterblog.storage.Storage;
 import com.octo.android.robospice.SpiceManager;
@@ -37,9 +40,9 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
         void onPostSelect(Post post);
     }
 
-    private SpiceManager spiceManager = new SpiceManager(TwisterBlogService.class);
-    private PostsRequest postsRequest;
-    private DeletePostRequest deletePostRequest;
+    private SpiceManager mSpiceManager = new SpiceManager(TwisterBlogService.class);
+    private PostsRequest mPostsRequest;
+    private DeletePostRequest mDeletePostRequest;
 
     @ViewById(R.id.swipe_container)
     SwipeRefreshLayout updater;
@@ -58,20 +61,21 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postsRequest = new PostsRequest();
+        mPostsRequest = new PostsRequest();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        spiceManager.start(getActivity());
-        getSpiceManager().execute(postsRequest, "twister_posts", DurationInMillis.ONE_SECOND, new ListPostsRequestListener());
+        mSpiceManager.start(getActivity());
+        RequestStatusObject.getInstance().setStarted();
+        getSpiceManager().execute(mPostsRequest, "twister_posts", DurationInMillis.ONE_SECOND, new ListPostsRequestListener());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        spiceManager.shouldStop();
+        mSpiceManager.shouldStop();
     }
 
     @AfterViews
@@ -102,6 +106,7 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
             if (post == null) return null;
 
             adapter.remove(position);
+            Log.d("unit_tests", "PostsListFragment - swipe delete, remove item");
 
             return new EnhancedListView.Undoable() {
                 @Override
@@ -114,15 +119,18 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
                 }
                 @Override
                 public void discard() {
-                    deletePostRequest = new DeletePostRequest(post.id);
-                    getSpiceManager().execute(deletePostRequest, post.id, DurationInMillis.ALWAYS_EXPIRED, null);
+                    Log.d("unit_tests", "PostsListFragment - execute delete request");
+                    mDeletePostRequest = new DeletePostRequest(post.id);
+                    RequestStatusObject.getInstance().setStarted();
+                    getSpiceManager().execute(mDeletePostRequest, post.id,
+                            DurationInMillis.ALWAYS_EXPIRED, new DeleteRequestListener());
                 }
             };
         }
     };
 
     protected SpiceManager getSpiceManager() {
-        return spiceManager;
+        return mSpiceManager;
     }
 
     @ItemClick(R.id.list_posts)
@@ -146,22 +154,36 @@ public class PostsListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        getSpiceManager().execute(postsRequest, "twister_posts", DurationInMillis.ONE_SECOND, new ListPostsRequestListener());
+        RequestStatusObject.getInstance().setStarted();
+        getSpiceManager().execute(mPostsRequest, "twister_posts", DurationInMillis.ONE_SECOND, new ListPostsRequestListener());
     }
 
     public final class ListPostsRequestListener implements RequestListener<Post.List> {
-
         @Override
         public void onRequestFailure(SpiceException spiceException) {
             Toast.makeText(getActivity(), "failure update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
+            RequestStatusObject.getInstance().setFinished();
         }
-
         @Override
         public void onRequestSuccess(final Post.List result) {
             Toast.makeText(getActivity(), "success update posts", Toast.LENGTH_SHORT).show();
             updater.setRefreshing(false);
+            Log.d("unit_tests", "PostsListFragment - result received");
             updateList(result);
+            RequestStatusObject.getInstance().setFinished();
+        }
+    }
+
+    public final class DeleteRequestListener implements RequestListener<RequestResult> {
+        @Override
+        public void onRequestFailure(SpiceException spiceException) {
+            RequestStatusObject.getInstance().setFinished();
+        }
+        @Override
+        public void onRequestSuccess(final RequestResult result) {
+            Toast.makeText(getActivity(), "posts success deleted", Toast.LENGTH_SHORT).show();
+            RequestStatusObject.getInstance().setFinished();
         }
     }
 }
