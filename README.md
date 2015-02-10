@@ -2,7 +2,7 @@
 
 This project was made during Yandex Development Automatization School 2014/2015.<br>
 Actually, it's just the GUI to web-blog made by our project group - https://github.com/autoschool/twister.<br>
-It contains unit-tests (JUnit 4.10) and system-tests (Espresso 2.0) examples for Android, and gradle build settings as well.<br>
+It contains unit-tests (JUnit 4.11) and system-tests (Espresso 2.0) examples for Android, and gradle build settings as well.<br>
 
 How to run tests:<br>
 "gradle connectedAndroidTest" - simple way<br>
